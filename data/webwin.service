@@ -1,0 +1,11 @@
+[Unit]
+Description=Main server for Web Desktop Environment
+After=network.target
+
+[Service]
+Type=dbus
+BusName=org.fpemud.WRT
+ExecStart=/usr/sbin/webwin
+
+[Install]
+WantedBy=multi-user.target
