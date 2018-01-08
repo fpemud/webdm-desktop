@@ -12,6 +12,7 @@ class WwParam:
         self.runDir = "/run/webwin"
         self.logDir = "/var/log/webwin"
         self.tmpDir = "/tmp/webwin"
+        self.varDir = "/var/webwin"
 
         self.mainloop = None
 

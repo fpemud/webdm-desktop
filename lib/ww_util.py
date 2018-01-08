@@ -4,6 +4,7 @@
 import os
 import re
 import sys
+import random
 import socket
 import shutil
 import logging
@@ -13,18 +14,69 @@ import threading
 import subprocess
 import ipaddress
 from collections import OrderedDict
+from OpenSSL import crypto
 from gi.repository import GLib
 
 
 class WwUtil:
 
     @staticmethod
-    def is_int(s):
-        try:
-            int(s)
-            return True
-        except ValueError:
-            return False
+    def genCertAndKey(caCert, caKey, cn, keysize):
+        k = crypto.PKey()
+        k.generate_key(crypto.TYPE_RSA, keysize)
+
+        cert = crypto.X509()
+        cert.get_subject().CN = cn
+        cert.set_serial_number(random.randint(0, 65535))
+        cert.gmtime_adj_notBefore(100 * 365 * 24 * 60 * 60 * -1)
+        cert.gmtime_adj_notAfter(100 * 365 * 24 * 60 * 60)
+        cert.set_issuer(caCert.get_subject())
+        cert.set_pubkey(k)
+        cert.sign(caKey, 'sha1')
+
+        return (cert, k)
+
+    @staticmethod
+    def genSelfSignedCertAndKey(cn, keysize):
+        k = crypto.PKey()
+        k.generate_key(crypto.TYPE_RSA, keysize)
+
+        cert = crypto.X509()
+        cert.get_subject().CN = cn
+        cert.set_serial_number(random.randint(0, 65535))
+        cert.gmtime_adj_notBefore(100 * 365 * 24 * 60 * 60 * -1)
+        cert.gmtime_adj_notAfter(100 * 365 * 24 * 60 * 60)
+        cert.set_issuer(cert.get_subject())
+        cert.set_pubkey(k)
+        cert.sign(k, 'sha1')
+
+        return (cert, k)
+
+    @staticmethod
+    def loadCertAndKey(certFile, keyFile):
+        cert = None
+        with open(certFile, "rt") as f:
+            buf = f.read()
+            cert = crypto.load_certificate(crypto.FILETYPE_PEM, buf)
+
+        key = None
+        with open(keyFile, "rt") as f:
+            buf = f.read()
+            key = crypto.load_privatekey(crypto.FILETYPE_PEM, buf)
+
+        return (cert, key)
+
+    @staticmethod
+    def dumpCertAndKey(cert, key, certFile, keyFile):
+        with open(certFile, "wb") as f:
+            buf = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
+            f.write(buf)
+            os.fchmod(f.fileno(), 0o644)
+
+        with open(keyFile, "wb") as f:
+            buf = crypto.dump_privatekey(crypto.FILETYPE_PEM, key)
+            f.write(buf)
+            os.fchmod(f.fileno(), 0o600)
 
     @staticmethod
     def ipMaskToPrefix(ip, netmask):

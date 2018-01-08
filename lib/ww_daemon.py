@@ -17,6 +17,7 @@ class WwDaemon:
         self.param = param
 
     def run(self):
+        WwUtil.ensureDir(self.param.varDir)
         try:
             logging.getLogger().addHandler(logging.StreamHandler(sys.stderr))
             logging.getLogger().setLevel(WwUtil.getLoggingLevel(self.param.logLevel))

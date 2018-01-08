@@ -17,6 +17,9 @@ install:
 	find "$(DESTDIR)/$(prefix)/share/webwin" -type f | xargs chmod 644
 	find "$(DESTDIR)/$(prefix)/share/webwin" -type d | xargs chmod 755
 
+	install -d -m 0755 "$(DESTDIR)/$(prefix)/etc/pam.d"
+	cp -r etc/pam.d/* "$(DESTDIR)/$(prefix)/etc/pam.d"
+
 	install -d -m 0755 "$(DESTDIR)/$(prefix)/lib/systemd/system"
 	install -m 0644 data/webwin.service "$(DESTDIR)/$(prefix)/lib/systemd/system"
 
