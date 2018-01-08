@@ -5,10 +5,10 @@ import os
 import sys
 import shutil
 import argparse
-sys.path.append('/usr/lib/wrtd')
-from wrt_util import WrtUtil
-from wrt_param import WrtParam
-from wrt_daemon import WrtDaemon
+sys.path.append('/usr/lib/webwin')
+from ww_util import WwUtil
+from ww_param import WwParam
+from ww_daemon import WwDaemon
 
 # parse parameter
 parseResult = None
@@ -20,7 +20,7 @@ if True:
                            help="Set output debug message level")
     parseResult = argParser.parse_args()
 
-param = WrtParam()
+param = WwParam()
 
 try:
     # fill WrtParam according to argument
@@ -28,14 +28,13 @@ try:
         param.pidFile = parseResult.pid_file
     param.logLevel = parseResult.debug_level
 
-    # create logDir
-    WrtUtil.ensureDir(param.logDir)
-
-    # create tmpDir
-    WrtUtil.mkDirAndClear(param.tmpDir)
+    # create directories
+    WwUtil.ensureDir(param.logDir)
+    WwUtil.mkDirAndClear(param.tmpDir)
+    WwUtil.mkDirAndClear(param.runDir)
 
     # start server
-    param.daemon = WrtDaemon(param)
+    param.daemon = WwDaemon(param)
     param.daemon.run()
 finally:
     if os.path.exists(param.tmpDir):

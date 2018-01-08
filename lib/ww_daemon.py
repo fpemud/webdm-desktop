@@ -3,15 +3,12 @@
 
 import os
 import sys
-import json
 import signal
-import shutil
 import logging
-import toposort
-import netifaces
 from gi.repository import GLib
-from gi.repository import GObject
 from ww_util import WwUtil
+from ww_srv_proxy import WwSrvProxy
+from ww_srv_httpd import WwSrvHttpd
 
 
 class WwDaemon:
@@ -20,11 +17,9 @@ class WwDaemon:
         self.param = param
 
     def run(self):
-        WrtUtil.mkDirAndClear(self.param.tmpDir)
-        WrtUtil.mkDirAndClear(self.param.runDir)
         try:
             logging.getLogger().addHandler(logging.StreamHandler(sys.stderr))
-            logging.getLogger().setLevel(WrtUtil.getLoggingLevel(self.param.logLevel))
+            logging.getLogger().setLevel(WwUtil.getLoggingLevel(self.param.logLevel))
             logging.info("Program begins.")
 
             # write pid file
@@ -35,8 +30,8 @@ class WwDaemon:
             self.param.mainloop = GLib.MainLoop()
 
             # business initialize
-            self.param.srvHttpd = WwHttpd()
-            self.param.srvProxy = WwProxy()
+            self.param.srvHttpd = WwSrvHttpd(self.param)
+            self.param.srvProxy = WwSrvProxy(self.param, self.param.srvHttpd.getPort())
 
             # start main loop
             logging.info("Mainloop begins.")
@@ -50,8 +45,6 @@ class WwDaemon:
             if self.param.srvHttpd is not None:
                 self.param.srvHttpd.dispose()
             logging.shutdown()
-            shutil.rmtree(self.param.runDir)
-            shutil.rmtree(self.param.tmpDir)
 
     def _sigHandlerINT(self, signum):
         logging.info("SIGINT received.")

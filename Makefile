@@ -9,8 +9,13 @@ install:
 
 	install -d -m 0755 "$(DESTDIR)/$(prefix)/lib/webwin"
 	cp -r lib/* "$(DESTDIR)/$(prefix)/lib/webwin"
-	find "$(DESTDIR)/$(prefix)/lib/webwin" -path "$(DESTDIR)/$(prefix)/lib/webwin/plugins" -prune -o -type f | xargs chmod 644
-	find "$(DESTDIR)/$(prefix)/lib/webwin" -path "$(DESTDIR)/$(prefix)/lib/webwin/plugins" -prune -o -type d | xargs chmod 755
+	find "$(DESTDIR)/$(prefix)/lib/webwin" -type f | xargs chmod 644
+	find "$(DESTDIR)/$(prefix)/lib/webwin" -type d | xargs chmod 755
+
+	install -d -m 0755 "$(DESTDIR)/$(prefix)/share/webwin"
+	cp -r share/* "$(DESTDIR)/$(prefix)/share/webwin"
+	find "$(DESTDIR)/$(prefix)/share/webwin" -type f | xargs chmod 644
+	find "$(DESTDIR)/$(prefix)/share/webwin" -type d | xargs chmod 755
 
 	install -d -m 0755 "$(DESTDIR)/$(prefix)/lib/systemd/system"
 	install -m 0644 data/webwin.service "$(DESTDIR)/$(prefix)/lib/systemd/system"
