@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILES="./wrtd"
+FILES="./webwin"
 LIBFILES="$(find ./lib -name '*.py' | tr '\n' ' ')"
 ERRFLAG=0
 

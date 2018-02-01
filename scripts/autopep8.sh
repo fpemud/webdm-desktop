@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILES="./wrtd"
+FILES="./webwin"
 LIBFILES="$(find ./lib -name '*.py' | tr '\n' ' ')"
 
 autopep8 -ia --ignore=E501,E402 ${FILES}
