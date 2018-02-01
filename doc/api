@@ -1,0 +1,6 @@
+/api/surfaces		GET				get surface list
+/api/surfaces		POST				create a new surface
+/api/surfaces/{name}	DELETE				delete a surface
+/api/surfaces/{name}	GET				get the information of a surface
+/api/surfaces/{name}	PATCH				modify a surface
+
